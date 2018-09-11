@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "alexa-sdk": "^1.0.10",
-    "sync-request": "^6.0.0"
+    "sync-request": "^6.0.0",
+    "csv-parse": "^3.0.0"
   }
 }
