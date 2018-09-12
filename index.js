@@ -1,12 +1,11 @@
 'use strict';
 const Alexa = require("alexa-sdk");
-const csvSync = require('csv-parse/lib/sync'); // requiring sync module
+const csvSync = require('csv-parse/lib/sync'); 
 const file = 'study.csv';
 const fs = require('fs');
 let data = fs.readFileSync(file);
 let res = csvSync(data);
 
-//インテントハンドラーを登録します。今回は名前を覚えている状態のセッションが必要なので２つハンドラを登録します。
 exports.handler = function(event, context, callback) {
     const alexa = Alexa.handler(event, context,callback);
     alexa.appId = process.env.ALEXA_APP_ID;
@@ -14,7 +13,6 @@ exports.handler = function(event, context, callback) {
     alexa.execute();
 };
 
-//ハンドラの実装です。こちらが通常状態のハンドラです。
 const handlers = {
     //起動時に呼ばれます。
     'LaunchRequest': function () {
@@ -24,9 +22,8 @@ const handlers = {
         var message =res[0][0];
         this.emit(':tell',message);
     },
-    //以下は既定のハンドラです。今回は特に触れません。
     'AMAZON.HelpIntent': function () {
-        const speechOutput = 'このスキルは、ひたすら垂れ流します。';
+        const speechOutput = 'CSVを流すスキルです。';
         this.response.speak(speechOutput);
         this.emit(':responseReady');
     },
