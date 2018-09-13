@@ -1,7 +1,7 @@
 'use strict';
 const Alexa = require("alexa-sdk");
 const csvSync = require('csv-parse/lib/sync'); 
-const file = 'study.csv';
+const file = 'texmat.csv';
 const fs = require('fs');
 let data = fs.readFileSync(file);
 let res = csvSync(data);
