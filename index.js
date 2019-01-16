@@ -21,47 +21,43 @@ exports.handler = function (event, context, callback) {
 const handlers = {
     //起動時に呼ばれます。
     'LaunchRequest': function () {
-        this.emit(':ask', "こんにちは。行きたい課の名前か、知りたいことを教えてください。");
         if(supportsDisplay.call(this)){
             
-            //let item1 = makeImage('https://s3-ap-northeast-1.amazonaws.com/asahilead/owariasahi_second.jpg', 400, 480);
-            //let item2 = makeImage('https://s3-ap-northeast-1.amazonaws.com/asahilead/owariasahi_third.jpg', 400, 480);
-            //let item3 = makeImage('https://s3-ap-northeast-1.amazonaws.com/asahilead/owariasahi_whole.jpg', 400, 480);
-            const backgroundImage = new Alexa.ImageHelper('https://s3-ap-northeast-1.amazonaws.com/asahilead/owariasahi_second.jpg', 400, 480)
-                .addImageInstance()
-                .getImage();
-            //const listItemBuilder = new Alexa.templateBuilders.ListItemBuilder();
-            //const listTemplateBuilder = new Alexa.templateBuilders.ListTemplate2Builder();
-       
-            // ImageHelper.addImageInstance(item2)
-            //ImageHelper.addImageInstance(item3)
-                      
-            //listItemBuilder.addItem(itemI, '二階');
-            //listItemBuilder.addItem(item2, '三階');
-            //listItemBuilder.addItem(item3, '一階');
-            const textcontent = new Alexa.RichTextContentHelper()
-                .withPrimaryText('<font size="5">',message)
-                .getTextContent();
+            let item1 = makeImage('https://s3-ap-northeast-1.amazonaws.com/asahilead/owariasahi_second.jpg', 400, 480);
+            let item2 = makeImage('https://s3-ap-northeast-1.amazonaws.com/asahilead/owariasahi_third.jpg', 400, 480);
+            let item3 = makeImage('https://s3-ap-northeast-1.amazonaws.com/asahilead/owariasahi_whole.jpg', 400, 480);
+            const builder = new Alexa.templateBuilders.BodyTemplate1Builder();
+            const template = builder.setVackgroundImage(item1).build();
+            this.response.speak("こんにちは。行きたい課の名前か、知りたいことを教えてください。")
+                .renderTemplate(template)
+                .listen("知りたいことを教えてください．");
+            this.emit(':responseReady');
+        }else{
+            this.emit(':ask', "こんにちは。行きたい課の名前か、知りたいことを教えてください。");
+        } 
+           // const textcontent = new Alexa.RichTextContentHelper()
+             //   .withPrimaryText('<font size="5">',message)
+               // .getTextContent();
 
-            const token = 'TOKEN';
-            return handlerInput.responseBuilder
-                .speak(message)
-                .addRenderTemplateDirective({
-                    type: '受付案内',
-                    backButton: 'VISIBLE',
-                    backgroundImage: backgroundImage,
-                    title :title,
-                    textContent: textContent,
-                    token : token,
-                })
-                .getResponse();
+            //const token = 'TOKEN';
+            //return handlerInput.responseBuilder
+              //  .speak(message)
+               // .addRenderTemplateDirective({
+                 //   type: '受付案内',
+                  //  backButton: 'VISIBLE',
+                  //  backgroundImage: backgroundImage,
+                   // title :title,
+                    //textContent: textContent,
+                    //token : token,
+               // })
+               // .getResponse();
 
             //const listItems = listItemBuilder.build();
             //const listTemplate = listTemplateBuilder.setToken('listToken')
                 //.setTitle('窓口案内')
                 //.setListItems(listItems)
                 //.build();
-         'testIntent':function () {
+        'testIntent':function () {
         var message = "処理が先に終わっちゃったよ。";
             var log_message = "";
             if (!this.event.request.intent.slots.qs.value && !this.event.request.intent.slots.dep.value) {
@@ -96,70 +92,9 @@ const handlers = {
                  } 
              }
              console.log(log_message);
-
-             const textcontent = new Alexa.RichTextContentHelper()
-             .withPrimaryText('<font size="5">',message)
-             .getTextContent();
-
-            const token = 'TOKEN';
-            
-            return handlerInput.responseBuilder
-             .speak(message)
-             .addRenderTemplateDirective({
-                 type: '受付案内',
-                 backButton: 'VISIBLE',
-                 backgroundImage: backgroundImage,
-                 title :title,
-                 textContent: textContent,
-                 token : token,
-             })
-             .getResponse();
-
             //this.emit(':responseReady', message + "もう一度聞きたい場合はそのまま質問を続けてください。終わる場合はバイバイと言ってください。");
             }
-        }else{
-            'testIntent': function () {
-                var message = "処理が先に終わっちゃったよ。";
-                var log_message = "";
-                if (!this.event.request.intent.slots.qs.value && !this.event.request.intent.slots.dep.value) {
-                    message = '発音が聞き取れませんでした。もう一度お願いします。';
-                    console.log("発話ミス");
-                    this.emit(':ask', message);
-                 }
-                 else if (this.event.request.intent.slots.qs.value !== null || this.event.request.intent.slots.dep.value !== null) {
-                    for (var r = 2; r < res.length; r++) {
-                        if (res[r][5].indexOf(this.event.request.intent.slots.qs.value) > -1 || res[r][8].indexOf(this.event.request.intent.slots.dep.value) >-1) {
-                             if (res[r][5].indexOf(this.event.request.intent.slots.qs.value) > -1) {
-                                 if(isNaN(res[r][9])){
-                                      message = res[r][5] + "については" + res[r][12];
-                                }else{
-                                      message = res[r][5] + "については" + res[r][12] + "窓口は" + res[r][9] + "番です。";
-                                }
-                            }else {
-                                 if(isNaN(res[r][9])){
-                                      message = res[r][8] + "については" + res[r][12];
-                                }else{
-                                      message = res[r][8] + "については" + res[r][12] + "窓口は" + res[r][9] + "番です。";
-                                }
-                            }
-                    log_message = "対応済み用語:" + value_exist(this.event.request.intent.slots.qs.value, this.event.request.intent.slots.dep.value);
-                break;
-              }else if (this.event.request.intent.slots.dep.value == null) {
-                message = this.event.request.intent.slots.qs.value + "については該当するものがありませんでした。";
-                log_message = "非対応用語:" + value_exist(this.event.request.intent.slots.qs.value, this.event.request.intent.slots.dep.value);
-              }else if (this.event.request.intent.slots.qs.value == null) {
-                message = this.event.request.intent.slots.dep.value + "については該当するものがありませんでした。";
-                log_message = "非対応用語:" + value_exist(this.event.request.intent.slots.qs.value, this.event.request.intent.slots.dep.value);
-              }
-            }
-　      }
-    console.log(log_message);
-   
-    
-    const repromptSpeech = message;
-    this.emit(message + "もう一度聞きたい場合はそのまま質問を続けてください。終わる場合はバイバイと言ってください。");
-
-}
+        }
 //以下は既定のハンドラです。今回は特に触れません。
 'AMAZON.HelpIntent': function () {
     const speechOutput = 'このスキルは、ひたすら垂れ流します。';
