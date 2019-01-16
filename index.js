@@ -21,16 +21,28 @@ exports.handler = function (event, context, callback) {
 const handlers = {
     //起動時に呼ばれます。
     'LaunchRequest': function () {
-        this.emit(':ask', "こんにちは。行きたい課の名前か、知りたいことを教えてください。"); //Ad this.emitが読み込まれるとそれ以降の処理は行われず、次のIntentの待機状態になる。
+        this.emit(':ask', "こんにちは。行きたい課の名前か、知りたいことを教えてください。");
         if(supportsDisplay.call(this)){
-
-          //Ad ここから
-            const backgroundImage = new Alexa.ImageHelper('https://s3-ap-northeast-1.amazonaws.com/asahilead/owariasahi_second.jpg', 400, 480) //Ad ImageHelperはver2の書き方。今回は適さない。
+            
+            //let item1 = makeImage('https://s3-ap-northeast-1.amazonaws.com/asahilead/owariasahi_second.jpg', 400, 480);
+            //let item2 = makeImage('https://s3-ap-northeast-1.amazonaws.com/asahilead/owariasahi_third.jpg', 400, 480);
+            //let item3 = makeImage('https://s3-ap-northeast-1.amazonaws.com/asahilead/owariasahi_whole.jpg', 400, 480);
+            const backgroundImage = new Alexa.ImageHelper('https://s3-ap-northeast-1.amazonaws.com/asahilead/owariasahi_second.jpg', 400, 480)
                 .addImageInstance()
                 .getImage();
-            const textcontent = new Alexa.RichTextContentHelper()//Ad RichTextContentHelperも同様にver2。
+            //const listItemBuilder = new Alexa.templateBuilders.ListItemBuilder();
+            //const listTemplateBuilder = new Alexa.templateBuilders.ListTemplate2Builder();
+       
+            // ImageHelper.addImageInstance(item2)
+            //ImageHelper.addImageInstance(item3)
+                      
+            //listItemBuilder.addItem(itemI, '二階');
+            //listItemBuilder.addItem(item2, '三階');
+            //listItemBuilder.addItem(item3, '一階');
+            const textcontent = new Alexa.RichTextContentHelper()
                 .withPrimaryText('<font size="5">',message)
                 .getTextContent();
+
             const token = 'TOKEN';
             return handlerInput.responseBuilder
                 .speak(message)
@@ -43,22 +55,12 @@ const handlers = {
                     token : token,
                 })
                 .getResponse();
-            //Ad ここまで全部ver2の書き方。　今回のコードではエラーが出るはず。
 
-            //Ad ver1の書き方の例 ここから
-            let itemI = makeImage('画像URL', 400, 480); //画像のURL,縦,横のサイズをそれぞれ引数にとる
-            const builder = new Alexa.templateBuilders.BodyTemplate1Builder();// BodyTemplate1を使用
-            const template = builder.setBackgroundImage(itemI).build();
-            this.response.speak("こんにちは。行きたい課の名前か、知りたいことを教えてください。").renderTemplate(template).listen("知りたいことを教えてください。");//画像を使用する場合はこのような記述の仕方をする。
-            this.emit(':responseReady');
-            //Ad ここまで
-          }
-          //Ad サポートディスプレイは画像をサポートしている端末かどうかを判定しているので、elseの部分に24行目のaskの処理を入れてあげる。
-          else{
-            this.emit(':ask', "こんにちは。行きたい課の名前か、知りたいことを教えてください。");
-          }
-    },
-    //Ad 一つのIntentのなかに複数のIntentの処理を入れない。必ず分ける。あと、testIntentが二つといったような形での同名のIntentは複数宣言できない。
+            //const listItems = listItemBuilder.build();
+            //const listTemplate = listTemplateBuilder.setToken('listToken')
+                //.setTitle('窓口案内')
+                //.setListItems(listItems)
+                //.build();
          'testIntent':function () {
         var message = "処理が先に終わっちゃったよ。";
             var log_message = "";
@@ -91,16 +93,16 @@ const handlers = {
                         message = this.event.request.intent.slots.dep.value + "については該当するものがありませんでした。";
                         log_message = "非対応用語:" + value_exist(this.event.request.intent.slots.qs.value, this.event.request.intent.slots.dep.value);
                     }
-                 }
+                 } 
              }
              console.log(log_message);
-//Ad ここから
+
              const textcontent = new Alexa.RichTextContentHelper()
              .withPrimaryText('<font size="5">',message)
              .getTextContent();
 
             const token = 'TOKEN';
-
+            
             return handlerInput.responseBuilder
              .speak(message)
              .addRenderTemplateDirective({
@@ -112,11 +114,10 @@ const handlers = {
                  token : token,
              })
              .getResponse();
-//Ad ここまで全部ver2の書き方
+
             //this.emit(':responseReady', message + "もう一度聞きたい場合はそのまま質問を続けてください。終わる場合はバイバイと言ってください。");
             }
         }else{
-          //Ad 同名intent複数はダメよ〜〜〜〜〜〜＞＜
             'testIntent': function () {
                 var message = "処理が先に終わっちゃったよ。";
                 var log_message = "";
@@ -153,8 +154,8 @@ const handlers = {
             }
 　      }
     console.log(log_message);
-
-
+   
+    
     const repromptSpeech = message;
     this.emit(message + "もう一度聞きたい場合はそのまま質問を続けてください。終わる場合はバイバイと言ってください。");
 
@@ -196,4 +197,3 @@ function supportsDisplay() {
         this.event.context.System.device.supportedInterfaces.Display
     return hasDisplay;
 }
-
